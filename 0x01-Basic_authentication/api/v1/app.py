@@ -21,6 +21,7 @@ if auth:
 
 @app.before_request
 def just_before_request():
+    """ Function implements before every request """
     dlist = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
     if auth:
         if auth.require_auth(request.path, dlist):
