@@ -12,6 +12,27 @@ import os
 app = Flask(__name__)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
+auth = os.environ.get('AUTH_TYPE', None)
+
+if auth:
+    if auth == 'basic_auth':
+        from api.v1.auth.basic_auth import BasicAuth
+        auth = BasicAuth()
+    else:
+        from api.v1.auth.auth import Auth
+        auth = Auth()
+
+
+@app.before_request
+def just_before_request():
+    """ Function implements before every request """
+    dlist = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
+    if auth:
+        if auth.require_auth(request.path, dlist):
+            if not auth.authorization_header(request):
+                abort(401)
+            if not auth.current_user(request):
+                abort(403)
 
 
 @app.errorhandler(404)
@@ -22,10 +43,17 @@ def not_found(error) -> str:
 
 
 @app.errorhandler(401)
-def forbidden(error) -> str:
-    """ Forbidden and Unauthorised
+def unauthorized(error) -> str:
+    """ Error handler for Unauthorised
     """
     return jsonify({"error": "Unauthorized"}), 401
+
+
+@app.errorhandler(403)
+def forbidden(error) -> str:
+    """ Error handler for Forbidden
+    """
+    return jsonify({"error": "Forbidden"}), 403
 
 
 if __name__ == "__main__":
