@@ -29,7 +29,7 @@ class Auth:
             password = _hash_password(password).decode('utf-8')
             return self._db.add_user(email=email, hashed_password=password)
 
-    def valid_login(self, email, password):
+    def valid_login(self, email: str, password: str) -> bool:
         """ Check if a user is valid """
         try:
             user = self._db.find_user_by(email=email)
