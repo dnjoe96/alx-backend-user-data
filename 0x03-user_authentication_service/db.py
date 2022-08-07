@@ -31,7 +31,7 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, hashed_password: str) -> Callable:
+    def add_user(self, email: str, hashed_password: str) -> User:
         """ Method to add a new user """
         user = User(id=1, email=email, hashed_password=hashed_password)
         self._session.add(user)
