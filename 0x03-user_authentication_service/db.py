@@ -40,7 +40,7 @@ class DB:
         return user
 
     # @staticmethod
-    def find_user_by(self, **vals: dict):
+    def find_user_by(self, **vals: dict) -> User:
         """ find a user by an arbitrary attribute """
         try:
             user = self._session.query(User).filter_by(**vals).first()
