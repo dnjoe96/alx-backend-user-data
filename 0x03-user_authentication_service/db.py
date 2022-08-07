@@ -37,6 +37,7 @@ class DB:
         """ Method to add a new user """
         user = User(id=1, email=email, hashed_password=hashed_password)
         self._session.add(user)
+        self._session.commit()
         return user
 
     # @staticmethod
