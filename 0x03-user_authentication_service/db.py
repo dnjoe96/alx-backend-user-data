@@ -4,6 +4,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import InvalidRequestError, NoResultFound
 from sqlalchemy.orm.session import Session
 from typing import Callable
 from user import Base
@@ -35,4 +36,15 @@ class DB:
         """ Method to add a new user """
         user = User(id=1, email=email, hashed_password=hashed_password)
         self._session.add(user)
+        return user
+
+    # @staticmethod
+    def find_user_by(self, **vals: dict):
+        """ find a user by an arbitrary attribute """
+        try:
+            user = self._session.query(User).filter_by(**vals).first()
+        except TypeError:
+            raise InvalidRequestError
+        if user is None:
+            raise NoResultFound
         return user
