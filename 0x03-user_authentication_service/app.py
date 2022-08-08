@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ Flask App Module """
-from flask import Flask, jsonify, request, abort, make_response
+from flask import Flask, jsonify, request, abort, make_response,\
+    redirect, url_for
 from auth import Auth
 
 app = Flask(__name__)
@@ -42,10 +43,28 @@ def login():
     session = AUTH.create_session(email)
     resp = make_response('store session')
     resp.set_cookie('session_id', session)
+    # session_id = resp.headers.get('Set-Cookie').
+    # split('session_id=')[-1].split(';')[0]
+    # print(resp.headers.get('Set-Cookie').
+    # split('session_id=')[-1], type(resp.headers.get('Set-Cookie').
+    # split('session_id=')[-1]))
     return jsonify({
         'email': email,
         'message': 'logged in',
     })
+
+
+@app.route('/sessions', methods=['DELETE'])
+def logout():
+    """ Logout view """
+    session_id = request.cookies.get('session_id')
+    if session_id:
+        user = AUTH.get_user_from_session_id(session_id)
+        if user:
+            AUTH.destroy_session(user.id)
+            redirect(url_for('index'))
+        else:
+            abort(403)
 
 
 if __name__ == '__main__':
