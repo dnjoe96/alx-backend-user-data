@@ -86,3 +86,7 @@ def main() -> None:
         logger.handle(log_record)
     cursor.close()
     db.close()
+
+
+if __name__ == '__main__':
+    main()
