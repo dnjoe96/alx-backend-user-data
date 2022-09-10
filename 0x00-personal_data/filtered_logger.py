@@ -16,6 +16,7 @@ def filter_datum(fields: List[str], redaction: str, message: str,
                       field + "=" + redaction + separator, temp)
     return temp
 
+
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
         """
@@ -29,4 +30,3 @@ class RedactingFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         NotImplementedError
-
