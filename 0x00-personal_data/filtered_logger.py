@@ -68,3 +68,21 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         return connection
     except mysql.connector.Error as e:
         print("Error: ", e)
+
+
+def main() -> None:
+    """ Main function """
+    columns = ["name", "email", "phone", "ssn", "password", "ip", "last_login",
+               "user_agent"]
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users;")
+    logger = get_logger()
+    for row in cursor:
+        series = map(lambda x: "{}={}".format(x[0], x[1]), zip(columns, row))
+        log_message = "{}".format("; ".join(list(series)))
+        log_record = logging.LogRecord(
+            "user_data", logging.INFO, None, None, log_message, None, None)
+        logger.handle(log_record)
+    cursor.close()
+    db.close()
