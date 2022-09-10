@@ -4,6 +4,7 @@ Class that inherits from Auth to create a new authentication mechanism
 """
 from api.v1.auth.auth import Auth
 import uuid
+from models.user import User
 
 
 class SessionAuth(Auth):
