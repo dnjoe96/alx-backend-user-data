@@ -36,6 +36,7 @@ def just_before_request():
             if not auth.authorization_header(request) and \
                     auth.session_cookie(request):
                 abort(401)
+            print(request)
             if not auth.current_user(request):
                 abort(403)
             request.currrent_user = auth.current_user
