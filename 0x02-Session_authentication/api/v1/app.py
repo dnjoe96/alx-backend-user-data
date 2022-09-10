@@ -21,6 +21,12 @@ if auth:
     elif auth == 'session_auth':
         from api.v1.auth.session_auth import SessionAuth
         auth = SessionAuth()
+    elif auth == "session_exp_auth":
+        from api.v1.auth.session_exp_auth import SessionExpAuth
+        auth = SessionExpAuth()
+    elif auth == "session_db_auth":
+        from api.v1.auth.session_db_auth import SessionDBAuth
+        auth = SessionDBAuth()
     else:
         from api.v1.auth.auth import Auth
         auth = Auth()
@@ -33,13 +39,18 @@ def just_before_request():
              '/api/v1/auth_session/login/']
     if auth:
         if auth.require_auth(request.path, dlist):
-            if not auth.authorization_header(request) and \
-                    auth.session_cookie(request):
-                abort(401)
-            print(request)
-            if not auth.current_user(request):
+            if isinstance(auth, SessionAuth):
+                if auth.session_cookie(request) is None:
+                    abort(401)
+            else:
+                if auth.authorization_header(request) is None:
+                    abort(401)
+
+            current_user = auth.current_user(request)
+            if current_user is None:
                 abort(403)
-            request.currrent_user = auth.current_user
+
+            request.current_user = current_user
 
 
 @app.errorhandler(404)
